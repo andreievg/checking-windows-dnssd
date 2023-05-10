@@ -3,7 +3,7 @@ on: workflow_dispatch
 name: Build Windows
 jobs:
   build_and_test:
-    name: Build mac demo
+    name: Build test
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
