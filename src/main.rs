@@ -1,5 +1,7 @@
 use std::time::Duration;
 
+use mdns_sd::{ServiceDaemon, ServiceInfo};
+
 use {astro_dnssd::DNSServiceBuilder, std::collections::HashMap};
 
 const SERVICE_NAME: &'static str = "_omsupply._tcp";
@@ -31,6 +33,33 @@ pub(crate) fn start_discovery(port: u16, hardware_id: String) {
 
 #[tokio::main]
 async fn main() {
-    start_discovery(8000, "abc".to_string());
+    let mdns = ServiceDaemon::new().expect("Failed to create daemon");
+
+    // Create a service info.
+    let service_type = "_omsupply._tcp.local.";
+    let instance_name = "my_instance";
+    let host_ipv4 = "192.168.1.12";
+    let host_name = "192.168.1.12.local.";
+    let port = 8000;
+    let properties = [
+        (HARDWARE_ID_KEY, "test"),
+        (CLIENT_VERSION_KEY, "test"),
+        (PROTOCOL_KEY, "https"),
+    ];
+
+    let my_service = ServiceInfo::new(
+        service_type,
+        instance_name,
+        host_name,
+        host_ipv4,
+        port,
+        &properties[..],
+    )
+    .unwrap();
+
+    // Register with the daemon, which publishes the service.
+    mdns.register(my_service)
+        .expect("Failed to register our service");
+    // start_discovery(8000, "abc".to_string());
     tokio::time::sleep(Duration::from_secs(1000)).await;
 }
