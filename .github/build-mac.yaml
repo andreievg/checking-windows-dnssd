@@ -1,0 +1,18 @@
+on: workflow_dispatch
+
+name: Build Windows
+jobs:
+  build_and_test:
+    name: Build mac demo
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: Build
+        run: cargo build --release
+      - uses: actions/upload-artifact@v3
+        with:
+          name: "test-discovery"
+          path: "target/release/checking-windows-dnssd.exe"
