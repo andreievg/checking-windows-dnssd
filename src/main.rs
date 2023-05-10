@@ -19,6 +19,7 @@ pub(crate) fn start_discovery(port: u16, hardware_id: String) {
         let registration_result = DNSServiceBuilder::new(SERVICE_NAME, port)
             .with_txt_record(text_record.clone())
             .with_name(NAME)
+            .with_host("192.168.10.11")
             .register();
 
         match registration_result {
